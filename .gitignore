@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+logs/
+.env
+.venv/
+.vscode/
+data/
+output/
+first_to_second.md
+memo.md
