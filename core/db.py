@@ -14,19 +14,18 @@ def get_connection() -> sqlite3.Connection:
     return sqlite3.connect(DB_PATH)
 
 def init_db() -> None:
-    conn = get_connection()
-    cursor = conn.cursor()
+    with get_connection() as conn:
+        cursor = conn.cursor()
 
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS sales (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        date TEXT NOT NULL,
-        store TEXT NOT NULL,
-        product TEXT NOT NULL,
-        category TEXT NOT NULL,
-        amount INTEGER NOT NULL
-    )
-    """)
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS sales (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            date TEXT NOT NULL,
+            store TEXT NOT NULL,
+            product TEXT NOT NULL,
+            category TEXT NOT NULL,
+            amount INTEGER NOT NULL
+        )
+        """)
 
-    conn.commit()
-    conn.close()
+        conn.commit()
