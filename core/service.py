@@ -38,9 +38,10 @@ def export_report_to_excel(file_path: str, reports_list: list[dict]) -> None:
 
     with pd.ExcelWriter(report_path, engine="openpyxl") as writer:
         for report in reports_list:
+            sheet_name = report["sheet_name"]
             df = pd.DataFrame(
                 report["sales_summary"],
-                columns=[report["sheet_name"], "total_amount"]
+                columns=[sheet_name, "total_amount"]
             )
             df.to_excel(writer, sheet_name=report["sheet_name"], index=False)
 
