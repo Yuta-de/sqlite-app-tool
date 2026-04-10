@@ -57,6 +57,36 @@ def get_sales_summary_by_date():
                 SELECT date, SUM(amount)
                 FROM sales
                 GROUP BY date
+                ORDER BY date DESC            
+                """
+        cursor.execute(query)
+        rows = cursor.fetchall()
+
+    return rows
+
+def get_sales_summary_by_product():
+    with get_connection() as conn:
+        cursor = conn.cursor()
+
+        query = """
+                SELECT product, SUM(amount)
+                FROM sales
+                GROUP BY product
+                ORDER BY SUM(amount) DESC            
+                """
+        cursor.execute(query)
+        rows = cursor.fetchall()
+
+    return rows
+
+def get_sales_summary_by_category():
+    with get_connection() as conn:
+        cursor = conn.cursor()
+
+        query = """
+                SELECT category, SUM(amount)
+                FROM sales
+                GROUP BY category
                 ORDER BY SUM(amount) DESC            
                 """
         cursor.execute(query)

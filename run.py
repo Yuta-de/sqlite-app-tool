@@ -8,10 +8,12 @@ from core.repository import (
     get_sales,
     get_sales_summary_by_store,
     delete_all_sales,
-    get_sales_summary_by_date
+    get_sales_summary_by_date,
+    get_sales_summary_by_category,
+    get_sales_summary_by_product
 )
 from core.service import import_sales_from_excel,export_report_to_excel
-from core.config_loader import EXCEL_SHEET_DATE, EXCEL_SHEET_STORE
+from core.config_loader import EXCEL_SHEET_DATE, EXCEL_SHEET_STORE, EXCEL_SHEET_CATEGORY, EXCEL_SHEET_PRODUCT
 
 from pathlib import Path
 
@@ -48,8 +50,10 @@ def main() -> None:
     print("Excel出力")
     output_file_path = "output/report.xlsx"
     reports_list = [
-        {"sales_summary": sales_summary_store, "sheet_name": EXCEL_SHEET_STORE},
-        {"sales_summary": sales_summary_date, "sheet_name": EXCEL_SHEET_DATE}
+        {"sales_summary": get_sales_summary_by_store(), "sheet_name": EXCEL_SHEET_STORE},
+        {"sales_summary": get_sales_summary_by_date(), "sheet_name": EXCEL_SHEET_DATE},
+        {"sales_summary": get_sales_summary_by_category(), "sheet_name": EXCEL_SHEET_CATEGORY},
+        {"sales_summary": get_sales_summary_by_product(), "sheet_name": EXCEL_SHEET_PRODUCT}
     ]
     export_report_to_excel(output_file_path, reports_list)
 
