@@ -12,6 +12,17 @@ def import_sales_from_excel(file_path: str) -> None:
 
     df = pd.read_excel(excel_path)
 
+    # 列名バリデーション
+    required_cols = ["date", "store", "product", "category", "amount"]
+    missing_cols = [col for col in required_cols if col not in df.columns]
+
+    if missing_cols:
+        raise ValueError(
+            "Excelの列名が不足しています\n"
+            f"不足列名：{', '.join(missing_cols)}\n"
+            f"必須列名：{', '.join(required_cols)}"
+        )
+
     for row in df.itertuples(index=False):
         add_sale(
             date=str(row.date).split(" ")[0],
