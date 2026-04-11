@@ -3,6 +3,9 @@
 # ====================
 
 from core.db import get_connection
+from logging import getLogger
+
+logger = getLogger(__name__)
 
 
 def add_sale(date: str, store: str, product: str, category: str, amount:int) -> None:
@@ -15,6 +18,8 @@ def add_sale(date: str, store: str, product: str, category: str, amount:int) -> 
         """, (date, store, product, category, amount))
 
         conn.commit()
+    
+    logger.debug(f"Inserted sale: {date}, {store}, {product}, {category}, {amount}")
 
 def get_all_sales():
     with get_connection() as conn:

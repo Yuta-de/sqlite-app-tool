@@ -6,11 +6,16 @@ from pathlib import Path
 import pandas as pd
 
 from core.repository import add_sale
+from logging import getLogger
+
+logger = getLogger(__name__)
 
 def import_sales_from_excel(file_path: str) -> None:
     excel_path = Path(file_path)
 
+    logger.info(f"Import start: {file_path}")
     df = pd.read_excel(excel_path)
+    logger.info(f"Excel loaded: {len(df)} rows")
 
     # 列名バリデーション
     required_cols = ["date", "store", "product", "category", "amount"]
@@ -31,10 +36,14 @@ def import_sales_from_excel(file_path: str) -> None:
             category=str(row.category),
             amount=int(row.amount) # type: ignore[attr-defined]
         )
+    logger.info(f"{len(df)} rows inserted")
+    logger.info("Import completed")
 
 def export_report_to_excel(file_path: str, reports_list: list[dict]) -> None:
     report_path = Path(file_path)
     report_path.parent.mkdir(parents=True, exist_ok=True)
+
+    logger.info(f"Export start: {file_path}")
 
     with pd.ExcelWriter(report_path, engine="openpyxl") as writer:
         for report in reports_list:
@@ -44,4 +53,6 @@ def export_report_to_excel(file_path: str, reports_list: list[dict]) -> None:
                 columns=[sheet_name, "total_amount"]
             )
             df.to_excel(writer, sheet_name=report["sheet_name"], index=False)
+    
+    logger.info("Export completed")
 
