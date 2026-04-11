@@ -21,6 +21,10 @@ from core.config_loader import (
     DEFAULT_INPUT,
     DEFAULT_OUTPUT
 )
+import core.logger_setup 
+from logging import getLogger
+
+logger = getLogger(__name__)
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Sales Excel Import/Export tool")
@@ -32,33 +36,35 @@ def parse_args():
 
 
 def main() -> None:
-    args = parse_args()
+    try:
+        logger.info("Application started")
+        args = parse_args()
 
-    input_file_path = Path(args.input or DEFAULT_INPUT)
-    output_file_path = Path(args.output or DEFAULT_OUTPUT)
+        input_file_path = Path(args.input or DEFAULT_INPUT)
+        output_file_path = Path(args.output or DEFAULT_OUTPUT)
 
-    if not input_file_path.exists():
-        raise FileNotFoundError(f"入力ファイルが存在しません：{input_file_path}")
+        if not input_file_path.exists():
+            raise FileNotFoundError(f"入力ファイルが存在しません：{input_file_path}")
 
-    init_db()
-    print("データベースの初期化が完了しました。")
+        init_db()
 
-    # salesのデータ削除
-    delete_all_sales()
+        # salesのデータ削除
+        delete_all_sales()
 
-    import_sales_from_excel(str(input_file_path))
+        import_sales_from_excel(str(input_file_path))
 
-    print("Excel出力中...")
-
-    reports_list = [
-        {"sales_summary": get_sales_summary_by_store(), "sheet_name": EXCEL_SHEET_STORE},
-        {"sales_summary": get_sales_summary_by_date(), "sheet_name": EXCEL_SHEET_DATE},
-        {"sales_summary": get_sales_summary_by_category(), "sheet_name": EXCEL_SHEET_CATEGORY},
-        {"sales_summary": get_sales_summary_by_product(), "sheet_name": EXCEL_SHEET_PRODUCT}
-    ]
-    export_report_to_excel(str(output_file_path), reports_list)
-    print("完了しました。")
-
+        reports_list = [
+            {"sales_summary": get_sales_summary_by_store(), "sheet_name": EXCEL_SHEET_STORE},
+            {"sales_summary": get_sales_summary_by_date(), "sheet_name": EXCEL_SHEET_DATE},
+            {"sales_summary": get_sales_summary_by_category(), "sheet_name": EXCEL_SHEET_CATEGORY},
+            {"sales_summary": get_sales_summary_by_product(), "sheet_name": EXCEL_SHEET_PRODUCT}
+        ]
+        export_report_to_excel(str(output_file_path), reports_list)
+        logger.info("Application finished")
+    
+    except Exception as e:
+        logger.exception("Unexpected error occurred")
+        raise
 
 if __name__ == "__main__":
     main()
