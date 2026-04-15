@@ -29,13 +29,21 @@ logger = getLogger(__name__)
 def parse_args():
     parser = argparse.ArgumentParser(description="Sales Excel Import/Export tool")
 
+    #入出力用
     parser.add_argument("--input", help="入力Excelファイルのパス")
     parser.add_argument("--output", help="出力Excelファイルのパス")
 
+    #GUI用
+    parser.add_argument("--gui", help="GUI用の引数", action="store_true")
+
     return parser.parse_args()
 
+def gui_main() -> None:
+    # TODO:後で実装
+    pass
 
-def main() -> None:
+
+def cli_main() -> None:
     try:
         logger.info("Application started")
         args = parse_args()
@@ -67,4 +75,8 @@ def main() -> None:
         raise
 
 if __name__ == "__main__":
-    main()
+    args = parse_args()
+    if args.gui:
+        gui_main()
+    else:
+        cli_main()
