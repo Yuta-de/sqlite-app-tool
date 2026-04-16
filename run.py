@@ -39,8 +39,8 @@ def parse_args():
     return parser.parse_args()
 
 def gui_main() -> None:
-    # TODO:後で実装
-    pass
+    from gui.gui_app import gui_main
+    gui_main()
 
 
 def cli_main() -> None:
