@@ -5,7 +5,23 @@
 from pathlib import Path
 import pandas as pd
 
-from core.repository import add_sale
+from core.db import init_db
+from core.repository import (
+    delete_all_sales,
+    add_sale,
+    get_sales_summary_by_store,
+    get_sales_summary_by_date,
+    get_sales_summary_by_category,
+    get_sales_summary_by_product
+)
+
+from core.config_loader import (
+    EXCEL_SHEET_DATE,
+    EXCEL_SHEET_STORE,
+    EXCEL_SHEET_CATEGORY,
+    EXCEL_SHEET_PRODUCT
+)
+
 from logging import getLogger
 
 logger = getLogger(__name__)
@@ -55,4 +71,25 @@ def export_report_to_excel(file_path: str, reports_list: list[dict]) -> None:
             df.to_excel(writer, sheet_name=report["sheet_name"], index=False)
     
     logger.info("Export completed")
+
+def process_sales_report(input_file_path: Path, output_file_path: Path) -> None:
+    
+    # DB初期化
+    init_db()
+
+    # salesのデータ削除
+    delete_all_sales()
+
+    # excelのデータをDBに取り込み
+    import_sales_from_excel(str(input_file_path))
+
+    reports_list = [
+        {"sales_summary": get_sales_summary_by_store(), "sheet_name": EXCEL_SHEET_STORE},
+        {"sales_summary": get_sales_summary_by_date(), "sheet_name": EXCEL_SHEET_DATE},
+        {"sales_summary": get_sales_summary_by_category(), "sheet_name": EXCEL_SHEET_CATEGORY},
+        {"sales_summary": get_sales_summary_by_product(), "sheet_name": EXCEL_SHEET_PRODUCT}
+    ]
+
+    # エクスポート処理
+    export_report_to_excel(str(output_file_path), reports_list)
 
