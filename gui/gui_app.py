@@ -7,6 +7,8 @@ from pathlib import Path
 from tkinter.scrolledtext import ScrolledText
 from tkinter import filedialog
 from typing import Dict
+from core.service import process_sales_report
+from core.config_loader import DEFAULT_INPUT, DEFAULT_OUTPUT
 
 
 # --- GUI本体 ---
@@ -16,6 +18,15 @@ def gui_main():
         import_path = Path(import_var.get())
         export_path = Path(export_folder_var.get()) / (export_file_var.get() + ".xlsx")
         return {"import_path" : import_path, "export_path": export_path}
+    
+    def worker():
+        try:
+            setting = get_setting_info()
+            input_file_path = setting.get("import_path") or Path(DEFAULT_INPUT)
+            output_file_path = setting.get("export_path") or Path(DEFAULT_OUTPUT)
+            process_sales_report(input_file_path, output_file_path)
+        except Exception as e:
+            print("Unexpected error occurred:", str(e))
 
     root = tk.Tk()
     root.title("売上レポート管理ツール")
@@ -44,7 +55,7 @@ def gui_main():
     export_file_extention = tk.Label(root, text=".xlsx").grid(row=2,column=2 )
 
     # 実行ボタン
-    run_button = tk.Button(root, text="実行", command=get_setting_info).grid(row=3, column=1)
+    run_button = tk.Button(root, text="実行", command=worker).grid(row=3, column=1)
 
     # ログ表示ボックス
     log_box = ScrolledText(root, width=80, height=10)
