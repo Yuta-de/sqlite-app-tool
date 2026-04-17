@@ -6,10 +6,8 @@ import argparse
 
 from core.service import process_sales_report
 from core.config_loader import DEFAULT_INPUT, DEFAULT_OUTPUT
-import core.logger_setup # 読み込むだけ
+from core.logger_setup import setup_logger
 from logging import getLogger
-
-logger = getLogger(__name__)
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Sales Excel Import/Export tool")
@@ -30,6 +28,8 @@ def gui_main() -> None:
 
 def cli_main() -> None:
     try:
+        setup_logger()
+        logger = getLogger(__name__)
         logger.info("Application started")
         args = parse_args()
 
